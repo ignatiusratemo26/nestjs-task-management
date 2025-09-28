@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Task, TaskStatus } from './task.model';
-import { CreateTaskDto } from './dto/create-task.dto';
+import { CreateTaskDto, UpdateTaskStatusDto } from './dto/create-task.dto';
 
 @Injectable()
 export class TasksService {
@@ -31,6 +31,14 @@ export class TasksService {
     deleteTaskById(id : string ): string {
         this.tasks = this.tasks.filter(task => task.id !== id);
         return `Task ${id} successfully deleted`;
+    }
+    async updateTaskStatus(id : string, status : TaskStatus) : Promise<Task | undefined > {
+        const task = this.getTaskById(id);
+        if (!task) {
+            throw new HttpException('Task not found', HttpStatus.NOT_FOUND);
+        }
+        task.status = status;
+        return task;
     }
 
 }
