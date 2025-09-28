@@ -1,13 +1,10 @@
-// import { PartialType } from '@nestjs/swagger';
-import { TaskStatus } from '../task.model';
+import { IsNotEmpty } from 'class-validator'
+
 
 export class CreateTaskDto {
+    @IsNotEmpty()
     title: string;
+    
+    @IsNotEmpty()
     description: string;
-}
-
-// export class UpdateTaskDto extends PartialType(CreateTaskDto) {}
-
-export class UpdateTaskStatusDto {
-    status : TaskStatus;
 }
