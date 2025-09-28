@@ -1,6 +1,7 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Get, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Task, TaskStatus } from './task.model';
 import { CreateTaskDto, UpdateTaskStatusDto } from './dto/create-task.dto';
+import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
 
 @Injectable()
 export class TasksService {
@@ -14,6 +15,7 @@ export class TasksService {
         const { title, description } = createTaskDto;
         const { v4: uuidv4 } = await import('uuid');
         const task: Task = {
+
             id: uuidv4(),
             title,
             description,
@@ -39,6 +41,21 @@ export class TasksService {
         }
         task.status = status;
         return task;
+    }
+
+    getTasksWithFilters(filterDto: GetTasksFilterDto) {
+        const { status, search } = filterDto;
+
+        let tasks = this.getAllTasks();
+        if (status) {
+            tasks = tasks.filter(task => task.status===status)
+        }
+        if (search) {
+            tasks = tasks.filter(task => 
+                task.title.includes(search) || task.description.includes(search)
+        );
+        }
+        return tasks;
     }
 
 }
