@@ -51,6 +51,18 @@ export class ItemsService {
   }
 
   async update(id: number, updateItemDto: UpdateItemDto) {
+    // const item = await this.findOne(id);
+    // if (!item) throw new NotFoundException(`The item of ID ${id} is not found`);
+
+    // item.public = updateItemDto.public;
+    
+    // const comments = updateItemDto.comments.map(
+    //   (createCommentDto) => new Comment(createCommentDto),
+    // );
+    // item.comments.push(...comments);
+    // await this.entityManager.save(item);
+    // return item;
+    await this.entityManager.transaction(async (entityManager) => {
     const item = await this.findOne(id);
     if (!item) throw new NotFoundException(`The item of ID ${id} is not found`);
 
@@ -60,8 +72,15 @@ export class ItemsService {
       (createCommentDto) => new Comment(createCommentDto),
     );
     item.comments.push(...comments);
-    await this.entityManager.save(item);
-    return item;
+    await entityManager.save(item);
+
+    throw new Error();
+    const tagContent = `${Math.random()}`;
+    const tag = new Tag({content: tagContent});
+    await entityManager.save(tag);
+    console.log(tag);
+
+    });
   }
 
   async remove(id: number) {
