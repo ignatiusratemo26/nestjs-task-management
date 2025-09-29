@@ -1,10 +1,14 @@
-import { Get, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
-import { TaskStatus } from './task-status.enum';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
-import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
+import { TaskRepository } from './task.repository';
+import { Task } from './task.entity';
+import { TaskStatus } from './task-status.enum';
 
 @Injectable()
 export class TasksService {
+    constructor(
+        private taskRepository: TaskRepository,
+    ) {}
 
 
     // getAllTasks(): Task[] {
@@ -14,7 +18,8 @@ export class TasksService {
     // async createTask(createTaskDto: CreateTaskDto): Promise<Task> {
     //     const { title, description } = createTaskDto;
     //     const { v4: uuidv4 } = await import('uuid');
-    //     const task: Task = {
+    //     const task: Task = {import { TaskRepository } from './task.repository';
+
 
     //         id: uuidv4(),
     //         title,
@@ -25,15 +30,26 @@ export class TasksService {
     //     this.tasks.push(task);
     //     return task;  
     // }
-    // getTaskById(id : string): Task | undefined {
-    //     const found = this.tasks.find((task) => task.id === id)
-    //     if (!found) {
-    //         throw new NotFoundException(`Task with ID ${id} not found`);
+    async createTask(createTaskDto: CreateTaskDto): Promise<Task> {
+        const { title, description } = createTaskDto;
+        const task = new Task;
+        task.title = title;
+        task.description = description;
+        task.status = TaskStatus.OPEN;
+        await task.save();
 
-    //     }
-    //     return found;
+        return task;
+    }
 
-    // }
+    async getTaskById(id: number): Promise<Task> {
+        const found = await this.taskRepository.findOne({
+            where: {id}
+        });
+        if (!found) {
+            throw new NotFoundException(`Task with ID ${id} not found`);
+        }
+        return found;
+    }
 
     // deleteTaskById(id : string ): string {
 
