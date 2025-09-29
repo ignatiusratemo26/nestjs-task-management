@@ -5,7 +5,6 @@ import { DatabaseModule } from './database/database.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RequestService } from './request.service';
 import { AuthenticationMiddleware } from 'src/common/middleware/authentication.middleware';
-import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 

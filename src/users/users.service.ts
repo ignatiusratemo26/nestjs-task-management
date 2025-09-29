@@ -36,6 +36,13 @@ export class UsersService {
 
     return user;
   }
+  findUserByUsername(username: string) {
+    const user = this.usersRepository.findOne({
+      where: {username}
+    })
+    if (!user) throw new NotFoundException(`User ${username} is not found.`);
+    return user;
+  }
 
   update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;

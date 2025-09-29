@@ -1,15 +1,15 @@
 import { Injectable, Logger, NestMiddleware, UnauthorizedException } from "@nestjs/common";
-import { config } from "dotenv";
 import { NextFunction, Request, Response } from "express";
 import { RequestService } from "src/request.service";
-
-config();
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthenticationMiddleware implements NestMiddleware {
     private readonly logger = new Logger(AuthenticationMiddleware.name);
 
-    constructor(private readonly requestService: RequestService) {}
+    constructor(
+        private readonly jwtService: JwtService
+    ) {}
 
     use(req: Request, res: Response, next: NextFunction) {
         const authHeader = req.headers['authorization'];
@@ -17,24 +17,24 @@ export class AuthenticationMiddleware implements NestMiddleware {
         this.logger.log(AuthenticationMiddleware.name);
 
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            throw new UnauthorizedException('Missing or Invalid authorization hearder');
+            throw new UnauthorizedException('Missing or Invalid authorization header');
         }
 
         const token = authHeader.split(' ')[1];
-        const jwt_secret = process.env.JWT_SECRET;
-        if (!jwt_secret) {
-            throw new UnauthorizedException('JWT secret not configured');
-        }
 
-        if (token !== jwt_secret) {
+        try {
+            // Verify the JWT token properly
+            const payload = this.jwtService.verify(token);
+            
+            // Attach actual user info from token to request
+            (req as any).user = { 
+                userId: payload.sub, 
+                username: payload.username 
+            };
+            
+            next();
+        } catch (error) {
             throw new UnauthorizedException('Invalid Token');
         }
-
-        // attach user info to the request if valid
-        (req as any ).user = {id: 1, username: 'demoUser'};
-        
-
-        next();
-
     }
 }
