@@ -3,11 +3,17 @@ import { Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "t
 import { Item } from "./item.entity";
 
 @Entity()
-export class Comment extends AbstractEntity<Comment> {
+export class Comment {
+    @PrimaryGeneratedColumn()
+    id: number;
 
     @Column()
     content: string;
 
-    @ManyToOne(() => Item, (item) => item.comments, {cascade: true})
+    @ManyToOne(() => Item, (item) => item.comments)
     item: Item;
+
+    constructor(entity: Partial<Comment>) {
+        Object.assign(this, entity);
+    }
 }
