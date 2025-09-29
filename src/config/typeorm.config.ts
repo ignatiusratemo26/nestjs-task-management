@@ -1,22 +1,19 @@
-import { TypeOrmModuleOptions } from "@nestjs/typeorm";
-import * as dotenv from 'dotenv';
-import * as path from 'path';
+import { ConfigService } from "@nestjs/config";
+import { config } from "dotenv";
+import { DataSource } from "typeorm";
 
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+config();
 
-const postgresPassword = process.env.POSTGRES_PASSWORD;
+const configService = new ConfigService();
 
-if (!postgresPassword) {
-    throw new Error('POSTGRES_PASSWORD environment variable is not set');
-}
-
-export const typeOrmConfig: TypeOrmModuleOptions = {
+export default new DataSource({
     type: 'postgres',
-    host: 'localhost',
-    port: 5432,
-    username:'postgres',
-    password: postgresPassword,
-    database:'taskmanagement',
-    entities: [__dirname + '/../**/*.entity.ts'],
-    synchronize: true,
-}
+    host: configService.getOrThrow('POSTGRES_HOST'),
+    port: 5433,
+    database: configService.getOrThrow('POSTGRES_DATABASE'),
+    username: configService.getOrThrow('POSTGRES_USERNAME'),
+    password: configService.getOrThrow('POSTGRES_PASSWORD'),
+    migrations: ['./migrations/*{.ts,.js}'],
+    entities: ['./src/**/*.entity{.ts,.js}'],
+    synchronize: false,
+})
