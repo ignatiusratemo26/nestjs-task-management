@@ -7,26 +7,18 @@ import { RequestService } from './request.service';
 import { AuthenticationMiddleware } from 'src/common/middleware/authentication.middleware';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 
 
 
 @Module({
   imports: [
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) =>({
-        secret: configService.get<string>('JWT_SECRET'),
-        signOptions: {
-          expiresIn: '1h',
-        },
-      }),
-      inject:[ConfigService],
-    }),
     ConfigModule.forRoot({ isGlobal: true}),
     DatabaseModule,
     TasksModule,
     ItemsModule,
     AuthModule,
+    UsersModule,
   ],
   providers: [RequestService]
 
@@ -35,7 +27,7 @@ export class AppModule implements NestModule{
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthenticationMiddleware)
-      .exclude('auth/login','auth/register')
+      .exclude('auth/signup','auth/signin')
       .forRoutes("*");
 
   }
