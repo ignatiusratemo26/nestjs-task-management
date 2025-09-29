@@ -2,6 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { ItemsService } from "./items.service"
 import { Item } from "./entities/item.entity";
 import { getRepositoryToken } from "@nestjs/typeorm";
+import { EntityManager } from "typeorm";
 
 describe('ItemsService', () => {
     let service: ItemsService;
@@ -13,6 +14,10 @@ describe('ItemsService', () => {
                 {
                     provide:  getRepositoryToken(Item),
                     useValue: {},
+                },
+                {
+                    provide: EntityManager,
+                    useValue: {}
                 }
             ],
         }).compile();
