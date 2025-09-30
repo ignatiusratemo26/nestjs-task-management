@@ -23,10 +23,10 @@ export class AuthenticationMiddleware implements NestMiddleware {
         const token = authHeader.split(' ')[1];
 
         try {
-            // Verify the JWT token properly
+            // Verify the JWT token 
             const payload = this.jwtService.verify(token);
             
-            // Attach actual user info from token to request
+            // Attach user info from token to request
             (req as any).user = { 
                 userId: payload.sub, 
                 username: payload.username 

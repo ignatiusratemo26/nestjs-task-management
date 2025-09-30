@@ -10,6 +10,7 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { Comment } from './entities/comment.entity';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { Tag } from './entities/tag.entity';
+import { CreatePurchaseItemDto } from './dto/create-purchase-item.dto';
 
 @Injectable()
 export class ItemsService {
@@ -38,6 +39,10 @@ export class ItemsService {
     await this.entityManager.save(item);
 
   }
+
+  // async purchaseItem(createPurchaseItemDto: CreatePurchaseItemDto) {
+  //   const purchase = new
+  // }
 
   async findAll() {
     return this.itemsRepository.find();

@@ -15,6 +15,12 @@ export class Item{
     @Column({default: true})
     public: boolean;
 
+    @Column({default: 1})
+    price: number;
+
+    @Column({default: 0})
+    quantity: number;
+
     @OneToOne(() => Listing, {cascade: true})
     @JoinColumn()
     listing: Listing;
